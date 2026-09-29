@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: freightiq_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: freightiq
+      POSTGRES_PASSWORD: freightiq_pass
+      POSTGRES_DB: freightiq_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U freightiq -d freightiq_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    container_name: freightiq_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://freightiq:freightiq_pass@postgres:5432/freightiq_db
+      JWT_SECRET: super_secret_freightiq_enterprise_key_2025_maritime_ai
+      USE_REAL_DATA: "false"
+      PORT: 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
