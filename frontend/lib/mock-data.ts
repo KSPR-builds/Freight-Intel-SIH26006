@@ -180,68 +180,220 @@ export const MOCK_CHARTER_RECOMMENDATIONS = [
 ];
 
 export const MOCK_PROCUREMENT = {
-  kpis: {
-    total_spend: "$24.8M",
-    active_contracts: 12,
-    avg_unit_cost: "$74.50 / MT",
-    hedged_ratio: "68%"
-  },
-  commodities: [
-    { name: "Thermal Coal", price_per_mt: 72.40, trend: "-3.2%", status: "Optimal Buy Window", supplier: "Kalimantan Coal Resources" },
-    { name: "Coking Coal", price_per_mt: 184.00, trend: "+1.8%", status: "Forward Hedged", supplier: "BHP Queensland" },
-    { name: "Iron Ore 62% Fe", price_per_mt: 104.20, trend: "-1.5%", status: "Spot Buying", supplier: "Odisha Mining Corp" },
-    { name: "Rock Phosphate", price_per_mt: 142.00, trend: "+0.4%", status: "Contract Active", supplier: "OCP Morocco" }
+  total_demand_mt: 1240000,
+  procurement_planned_mt: 980000,
+  estimated_total_cost_usd: 108500000,
+  average_price_per_ton: 87.50,
+  potential_savings_usd: 3850000,
+  top_suppliers: [
+    {
+      name: "Kalimantan Coal Resources", country: "Indonesia", commodity: "Thermal Coal",
+      reliability_score: 98.2, fob_price_per_ton: 72.40, port_loading_speed_tpd: 45000,
+      moisture_grade: "GAR 4200 / TM 18%", lead_time_days: 12
+    },
+    {
+      name: "BHP Queensland Coal", country: "Australia", commodity: "Coking Coal",
+      reliability_score: 99.1, fob_price_per_ton: 184.00, port_loading_speed_tpd: 60000,
+      moisture_grade: "LV HCC / Ash 9.5%", lead_time_days: 18
+    },
+    {
+      name: "Odisha Mining Corp", country: "India", commodity: "Iron Ore 62% Fe",
+      reliability_score: 96.4, fob_price_per_ton: 104.20, port_loading_speed_tpd: 35000,
+      moisture_grade: "Fe 62% / Al 2.1%", lead_time_days: 8
+    },
+    {
+      name: "OCP Morocco", country: "Morocco", commodity: "Rock Phosphate",
+      reliability_score: 94.7, fob_price_per_ton: 142.00, port_loading_speed_tpd: 25000,
+      moisture_grade: "P2O5 32% / Cd 12ppm", lead_time_days: 22
+    }
   ],
-  suppliers: [
-    { id: 1, name: "Kalimantan Coal Resources", rating: 4.8, reliability: "98.2%", contract_volume: "450k MT" },
-    { id: 2, name: "BHP Queensland Coal", rating: 4.9, reliability: "99.1%", contract_volume: "300k MT" },
-    { id: 3, name: "Odisha Mineral Corp", rating: 4.6, reliability: "96.4%", contract_volume: "600k MT" }
+  upcoming_plans: [
+    {
+      id: 1, plan_code: "PRC-2026-001", commodity: "Thermal Coal",
+      origin: "Indonesia (Kalimantan)", destination: "Visakhapatnam",
+      supplier_name: "Kalimantan Coal Resources",
+      quantity_mt: 65000, delivery_window: "Oct 5–12, 2026",
+      fob_price: 72.40, freight_rate: 22.80,
+      total_cost_usd: 6142000, projected_savings_usd: 480000,
+      status: "Active", ai_recommendation_reason: "Optimal buy window — thermal coal prices at 3-month low."
+    },
+    {
+      id: 2, plan_code: "PRC-2026-002", commodity: "Iron Ore Pellets",
+      origin: "Paradip", destination: "Guangzhou (China)",
+      supplier_name: "Odisha Mining Corp",
+      quantity_mt: 55000, delivery_window: "Nov 1–8, 2026",
+      fob_price: 104.20, freight_rate: 19.50,
+      total_cost_usd: 6803500, projected_savings_usd: 320000,
+      status: "Planned", ai_recommendation_reason: "Spot price below 30-day average. Forward hedge recommended."
+    }
   ],
-  plans: [
-    { id: 1, commodity: "Thermal Coal", quantity_mt: 65000, origin: "Indonesia (Kalimantan)", destination: "Visakhapatnam", period: "Oct 2026", budget: 4800000, status: "Active" },
-    { id: 2, commodity: "Iron Ore Pellets", quantity_mt: 55000, origin: "Paradip", destination: "Guangzhou (China)", period: "Nov 2026", budget: 5200000, status: "Planned" }
+  demand_trends: [
+    { month: "May", demand_mt: 95000, avg_price_usd: 78.20, forecast_price_usd: 79.50 },
+    { month: "Jun", demand_mt: 102000, avg_price_usd: 76.80, forecast_price_usd: 77.20 },
+    { month: "Jul", demand_mt: 98000, avg_price_usd: 75.40, forecast_price_usd: 75.90 },
+    { month: "Aug", demand_mt: 110000, avg_price_usd: 74.10, forecast_price_usd: 73.80 },
+    { month: "Sep", demand_mt: 115000, avg_price_usd: 73.20, forecast_price_usd: 72.60 },
+    { month: "Oct", demand_mt: 120000, avg_price_usd: 72.40, forecast_price_usd: 71.80 },
+    { month: "Nov", demand_mt: 118000, avg_price_usd: null, forecast_price_usd: 71.20 },
+    { month: "Dec", demand_mt: 125000, avg_price_usd: null, forecast_price_usd: 70.80 }
+  ],
+  ai_recommendations: [
+    { title: "Accelerate Thermal Coal Purchase", metric: "Save $480k", detail: "Prices at 3-month low — optimal buy window closes in 8 days.", type: "buy" },
+    { title: "Hedge Iron Ore Forward", metric: "Lock $104.20/MT", detail: "Forecast shows +4.1% price increase in Nov–Dec due to Indian election demand surge.", type: "hedge" }
   ]
 };
 
 export const MOCK_PORTS = [
-  { id: 1, name: "Visakhapatnam", country: "India", region: "East Coast India", lat: 17.6868, lng: 83.2185, congestion_hours: 18, draft_limit_m: 16.5 },
-  { id: 2, name: "Chennai", country: "India", region: "East Coast India", lat: 13.0827, lng: 80.2707, congestion_hours: 24, draft_limit_m: 15.0 },
-  { id: 3, name: "Paradip", country: "India", region: "East Coast India", lat: 20.2644, lng: 86.6083, congestion_hours: 32, draft_limit_m: 17.0 },
-  { id: 4, name: "Kolkata / Haldia", country: "India", region: "East Coast India", lat: 22.0620, lng: 88.0830, congestion_hours: 40, draft_limit_m: 12.0 },
-  { id: 5, name: "Kakinada", country: "India", region: "East Coast India", lat: 16.9891, lng: 82.2475, congestion_hours: 14, draft_limit_m: 14.0 },
-  { id: 6, name: "Singapore", country: "Singapore", region: "SE Asia", lat: 1.29027, lng: 103.8519, congestion_hours: 12, draft_limit_m: 20.0 }
+  {
+    id: 1, name: "Visakhapatnam", code: "INVTZ", country: "India", region: "East Coast India",
+    latitude: 17.6868, longitude: 83.2185,
+    draft_depth_m: 16.5, berths: 24, avg_handling_time_hours: 36, congestion_index: 18,
+    waiting_time_days: 1.5, status: "Operational"
+  },
+  {
+    id: 2, name: "Chennai", code: "INMAA", country: "India", region: "East Coast India",
+    latitude: 13.0827, longitude: 80.2707,
+    draft_depth_m: 15.0, berths: 32, avg_handling_time_hours: 42, congestion_index: 24,
+    waiting_time_days: 2.0, status: "Congested"
+  },
+  {
+    id: 3, name: "Paradip", code: "INPAT", country: "India", region: "East Coast India",
+    latitude: 20.2644, longitude: 86.6083,
+    draft_depth_m: 17.0, berths: 16, avg_handling_time_hours: 30, congestion_index: 32,
+    waiting_time_days: 2.5, status: "Congested"
+  },
+  {
+    id: 4, name: "Kolkata / Haldia", code: "INHAL", country: "India", region: "East Coast India",
+    latitude: 22.0620, longitude: 88.0830,
+    draft_depth_m: 12.0, berths: 18, avg_handling_time_hours: 56, congestion_index: 40,
+    waiting_time_days: 3.5, status: "Congested"
+  },
+  {
+    id: 5, name: "Kakinada", code: "INKAK", country: "India", region: "East Coast India",
+    latitude: 16.9891, longitude: 82.2475,
+    draft_depth_m: 14.0, berths: 10, avg_handling_time_hours: 28, congestion_index: 14,
+    waiting_time_days: 1.0, status: "Operational"
+  },
+  {
+    id: 6, name: "Singapore", code: "SGSIN", country: "Singapore", region: "SE Asia",
+    latitude: 1.29027, longitude: 103.8519,
+    draft_depth_m: 20.0, berths: 55, avg_handling_time_hours: 18, congestion_index: 12,
+    waiting_time_days: 0.5, status: "Operational"
+  }
 ];
 
 export const MOCK_ROUTE_OPTIMIZATION = {
   origin: "Singapore",
   destination: "Visakhapatnam",
-  distance_nm: 1620,
-  estimated_days: 5.1,
-  fuel_cost_usd: 48600,
-  total_voyage_cost_usd: 121500,
-  carbon_footprint_mt: 310,
   best_route: {
-    name: "Direct Malacca-Bay of Bengal Great Circle Route",
+    route_id: 1,
+    route_name: "Great Circle via Malacca Strait",
+    origin_port: "Singapore",
+    destination_port: "Visakhapatnam",
+    label: "Balanced Optimal",
     distance_nm: 1620,
-    eta_days: 5.1,
-    fuel_burn_tpd: 24.0,
-    bunker_cost: 48600,
-    canal_tolls: 0,
+    transit_time_days: 5.1,
+    bunker_fuel_mt: 123,
+    total_cost_usd: 121500,
+    savings_usd: 8400,
+    co2_emissions_mt: 310,
     weather_risk: "Low (Monsoon Tail)",
-    efficiency_score: 94
+    waypoints: [[1.29, 103.85], [5.5, 99.0], [10.0, 87.5], [17.69, 83.22]] as [number, number][]
+  },
+  lowest_cost_route: {
+    route_id: 2,
+    route_name: "Eco-Steaming via Nicobar Channel",
+    origin_port: "Singapore",
+    destination_port: "Visakhapatnam",
+    label: "Eco-Steaming Lane",
+    distance_nm: 1720,
+    transit_time_days: 6.2,
+    bunker_fuel_mt: 104,
+    total_cost_usd: 109200,
+    savings_usd: 12300,
+    co2_emissions_mt: 265,
+    weather_risk: "Very Low",
+    waypoints: [[1.29, 103.85], [4.0, 97.0], [9.5, 88.0], [17.69, 83.22]] as [number, number][]
+  },
+  fastest_route: {
+    route_id: 3,
+    route_name: "Express Passage via Malacca North",
+    origin_port: "Singapore",
+    destination_port: "Visakhapatnam",
+    label: "Express Passage",
+    distance_nm: 1580,
+    transit_time_days: 4.4,
+    bunker_fuel_mt: 148,
+    total_cost_usd: 136800,
+    savings_usd: 0,
+    co2_emissions_mt: 374,
+    weather_risk: "Moderate (Strong SW)",
+    waypoints: [[1.29, 103.85], [6.5, 100.5], [12.0, 89.0], [17.69, 83.22]] as [number, number][]
+  },
+  lowest_emissions_route: {
+    route_id: 4,
+    route_name: "Green Lane via Andaman Sea",
+    origin_port: "Singapore",
+    destination_port: "Visakhapatnam",
+    label: "Lowest Carbon (CII A)",
+    distance_nm: 1800,
+    transit_time_days: 7.0,
+    bunker_fuel_mt: 89,
+    total_cost_usd: 98600,
+    savings_usd: 22900,
+    co2_emissions_mt: 226,
+    weather_risk: "Low (Tail Wind)",
+    waypoints: [[1.29, 103.85], [3.0, 96.0], [8.0, 86.0], [13.5, 82.0], [17.69, 83.22]] as [number, number][]
   },
   available_ports: MOCK_PORTS
 };
 
 export const MOCK_INSIGHTS = {
-  market_summary: "East Coast India bulk freight rates are stabilizing following monsoon recovery. Bunker fuel indices in Singapore reflect a 3.4% easing, supporting competitive fixture negotiations.",
-  high_priority_alerts: [
-    { title: "Paradip Port Draft Maintenance", description: "Dredging operations at Channel South will temporarily cap Cape draft to 16.2m for 10 days.", severity: "warning" },
-    { title: "Bunker Price Window", description: "Singapore VLSFO down to $585/MT — optimal bunkering window for inbound tonnage.", severity: "info" }
+  key_insights: [
+    {
+      id: 1,
+      title: "Freight Rate Softening on East Coast India Corridors",
+      impact: "High",
+      confidence: 93,
+      reason: "Baltic Dry Index easing by 4.1% week-on-week driven by Capesize oversupply in the Pacific. East Coast India Supramax spot rates expected to decline $0.80–$1.20/MT over 30 days.",
+      recommended_action: "Delay spot fixture bookings by 10–14 days to capture lower prevailing rates on Singapore → Visakhapatnam coal corridor."
+    },
+    {
+      id: 2,
+      title: "Optimal Bunker Window: Singapore VLSFO at 6-Month Low",
+      impact: "High",
+      confidence: 88,
+      reason: "Singapore VLSFO index has declined to $585/MT — the lowest level since April 2026 — following crude oil inventory build and easing refinery margins in SE Asia.",
+      recommended_action: "Bunker vessels inbound to Singapore at current prices. Lock 500 MT stem at $585/MT for outbound Singapore–Visakhapatnam fixtures."
+    },
+    {
+      id: 3,
+      title: "Paradip Port Draft Restriction Alert",
+      impact: "Medium",
+      confidence: 97,
+      reason: "Dredging operations at Channel South berths will temporarily restrict maximum Cape draft to 16.2m for approximately 10 days beginning Oct 5, 2026.",
+      recommended_action: "Route Panamax vessels (max 14.2m draft) to Paradip. Defer Capesize fixtures until dredging clears on or around Oct 15."
+    },
+    {
+      id: 4,
+      title: "Forward Hedging Opportunity on Fertilizer Routes",
+      impact: "Medium",
+      confidence: 84,
+      reason: "Fujairah → Chennai fertilizer freight rates are trending upward (+3.0%) driven by seasonal demand. Locking a 60-day forward rate now is projected to save $1.80/MT vs spot.",
+      recommended_action: "Execute forward charter fixture for 45,000 MT fertilizer cargo from Fujairah to Chennai. Target Handymax at $19.80/MT."
+    }
   ],
-  route_recommendations: [
-    { corridor: "Singapore → Visakhapatnam", action: "Spot Chartering Recommended", margin: "+7.2% vs benchmark" },
-    { corridor: "Newcastle → Paradip", action: "Lock 60-Day Forward Rate", margin: "Hedge $1.80/MT" }
+  market_trends: {
+    bdi_direction: "↓ Softening (BDI –4.1% WoW)",
+    fuel_index: "$585 / MT VLSFO (↓ 3.4%)",
+    fleet_supply: "Supramax Oversupply +8.2% vs Demand",
+    port_bottlenecks: "Paradip & Kolkata Elevated (32–40 Index)"
+  },
+  risk_analysis: [
+    { corridor: "Singapore → Visakhapatnam", factor: "Monsoon tail-wind transitioning — sea state may rise to 3–4 in Bay of Bengal after Oct 10.", risk_level: "Moderate" },
+    { corridor: "Newcastle → Paradip", factor: "Paradip draft restriction (dredging Oct 5–15) limits Cape intake by 15%.", risk_level: "Elevated" },
+    { corridor: "Fujairah → Chennai", factor: "Arabian Sea weather window favourable. Low piracy risk in current patrol zone.", risk_level: "Low" },
+    { corridor: "Guangzhou → Kolkata", factor: "Hooghly River draft tidal constraint capping Panamax DWT intake at 70k MT.", risk_level: "Moderate" }
   ]
 };
 

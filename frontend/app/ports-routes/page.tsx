@@ -122,7 +122,7 @@ export default function PortsRoutesPage() {
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Total Cost:</span>
-                <strong className="text-sky-700">${routeData.best_route.total_cost_usd.toLocaleString()}</strong>
+                <strong className="text-sky-700">${(routeData.best_route.total_cost_usd ?? 0).toLocaleString()}</strong>
               </div>
             </div>
           </div>
@@ -146,7 +146,7 @@ export default function PortsRoutesPage() {
             <div className="mt-3 space-y-1.5 text-xs">
               <div className="flex justify-between text-slate-600">
                 <span>Savings:</span>
-                <strong className="text-emerald-600">+${routeData.lowest_cost_route.savings_usd.toLocaleString()}</strong>
+                <strong className="text-emerald-600">+${(routeData.lowest_cost_route.savings_usd ?? 0).toLocaleString()}</strong>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Fuel (VLSFO):</span>
@@ -154,7 +154,7 @@ export default function PortsRoutesPage() {
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Total Cost:</span>
-                <strong className="text-slate-900">${routeData.lowest_cost_route.total_cost_usd.toLocaleString()}</strong>
+                <strong className="text-slate-900">${(routeData.lowest_cost_route.total_cost_usd ?? 0).toLocaleString()}</strong>
               </div>
             </div>
           </div>
@@ -186,7 +186,7 @@ export default function PortsRoutesPage() {
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Total Cost:</span>
-                <strong className="text-slate-900">${routeData.fastest_route.total_cost_usd.toLocaleString()}</strong>
+                <strong className="text-slate-900">${(routeData.fastest_route.total_cost_usd ?? 0).toLocaleString()}</strong>
               </div>
             </div>
           </div>
@@ -262,7 +262,7 @@ export default function PortsRoutesPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Nautical Miles:</span>
-                  <strong className="text-slate-900">{selectedRouteOption.distance_nm.toLocaleString()} NM</strong>
+                  <strong className="text-slate-900">{(selectedRouteOption.distance_nm ?? 0).toLocaleString()} NM</strong>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-500">Voyage Duration:</span>
@@ -285,11 +285,11 @@ export default function PortsRoutesPage() {
               <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-100 space-y-1">
                 <span className="text-[10px] font-bold text-emerald-700 uppercase">Financial Impact</span>
                 <div className="text-xl font-black text-emerald-800">
-                  ${selectedRouteOption.total_cost_usd.toLocaleString()}
+                  ${(selectedRouteOption.total_cost_usd ?? 0).toLocaleString()}
                 </div>
-                {selectedRouteOption.savings_usd > 0 && (
+                {((selectedRouteOption.savings_usd ?? 0) > 0) && (
                   <p className="text-[11px] text-emerald-700 font-semibold">
-                    Unlocks ${selectedRouteOption.savings_usd.toLocaleString()} net savings vs spot index.
+                    Unlocks ${(selectedRouteOption.savings_usd ?? 0).toLocaleString()} net savings vs spot index.
                   </p>
                 )}
               </div>

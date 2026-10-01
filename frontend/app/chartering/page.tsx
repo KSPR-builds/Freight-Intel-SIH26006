@@ -366,13 +366,13 @@ export default function CharteringPage() {
                       </div>
                     </td>
                     <td className="py-3.5 text-slate-700 font-medium">{v.vessel_type}</td>
-                    <td className="py-3.5 text-slate-800 font-semibold">{v.dwt.toLocaleString()} MT</td>
+                    <td className="py-3.5 text-slate-800 font-semibold">{(v.dwt ?? 0).toLocaleString()} MT</td>
                     <td className="py-3.5 text-slate-600 max-w-[180px] truncate" title={v.current_position_name}>
                       {v.current_position_name}
                     </td>
                     <td className="py-3.5 text-slate-500 font-mono">{v.eta}</td>
                     <td className="py-3.5 font-bold text-sky-700 font-mono">
-                      ${v.daily_hire_rate.toLocaleString()}/d
+                      ${(v.daily_hire_rate ?? 0).toLocaleString()}/d
                     </td>
                     <td className="py-3.5 text-slate-600 font-medium">
                       {v.fuel_consumption_tpd} TPD
@@ -443,7 +443,7 @@ export default function CharteringPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Class & DWT:</span>
-                    <span className="font-semibold text-slate-800">{bookingVessel.vessel_type} • {bookingVessel.dwt.toLocaleString()} MT</span>
+                    <span className="font-semibold text-slate-800">{bookingVessel.vessel_type} • {(bookingVessel.dwt ?? 0).toLocaleString()} MT</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Target Corridor:</span>
@@ -451,7 +451,7 @@ export default function CharteringPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Agreed Daily Rate:</span>
-                    <strong className="text-sky-700">${bookingVessel.daily_hire_rate.toLocaleString()} / day</strong>
+                    <strong className="text-sky-700">${(bookingVessel.daily_hire_rate ?? 0).toLocaleString()} / day</strong>
                   </div>
                 </div>
 

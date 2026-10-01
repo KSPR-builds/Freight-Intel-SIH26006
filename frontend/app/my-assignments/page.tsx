@@ -499,7 +499,7 @@ export default function MyAssignmentsPage() {
                       </div>
                     </div>
                     <div className="flex gap-4 text-xs font-semibold text-slate-600 bg-white p-2 rounded-xl border border-indigo-50">
-                      <div><span className="text-slate-400 block text-[10px] uppercase">Cargo</span> {contract.cargo_type} ({contract.total_quantity_mt.toLocaleString()} MT)</div>
+                      <div><span className="text-slate-400 block text-[10px] uppercase">Cargo</span> {contract.cargo_type} ({(contract.total_quantity_mt ?? 0).toLocaleString()} MT)</div>
                       <div><span className="text-slate-400 block text-[10px] uppercase">Period</span> {contract.period_start} - {contract.period_end}</div>
                     </div>
                   </div>
@@ -516,7 +516,7 @@ export default function MyAssignmentsPage() {
                         <div className="text-xs font-mono text-slate-600 space-y-1">
                           <div className="flex justify-between"><span>Start:</span> <span className="font-semibold text-slate-800">{new Date(v.laycan_start).toLocaleDateString('en-GB', {day:'2-digit', month:'short'})}</span></div>
                           <div className="flex justify-between"><span>End:</span> <span className="font-semibold text-slate-800">{new Date(v.laycan_end).toLocaleDateString('en-GB', {day:'2-digit', month:'short'})}</span></div>
-                          <div className="flex justify-between text-[11px] text-slate-500 pt-1 mt-1 border-t border-slate-200"><span>Qty:</span> <span>{v.quantity_mt.toLocaleString()} MT</span></div>
+                          <div className="flex justify-between text-[11px] text-slate-500 pt-1 mt-1 border-t border-slate-200"><span>Qty:</span> <span>{(v.quantity_mt ?? 0).toLocaleString()} MT</span></div>
                         </div>
                       </div>
                     ))}

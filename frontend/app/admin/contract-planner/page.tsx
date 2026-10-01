@@ -351,7 +351,7 @@ export default function ContractPlannerPage() {
                               </div>
                               <div>
                                 <span className="text-xs text-slate-500 block">Quantity</span>
-                                <span className="font-semibold text-slate-800">{v.quantity_mt.toLocaleString()} MT</span>
+                                <span className="font-semibold text-slate-800">{(v.quantity_mt ?? 0).toLocaleString()} MT</span>
                               </div>
                             </div>
                           </div>

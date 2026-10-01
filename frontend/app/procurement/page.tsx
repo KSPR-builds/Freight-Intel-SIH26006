@@ -227,8 +227,8 @@ export default function ProcurementPage() {
                   <td className="py-3 font-bold text-slate-800">{s.name}</td>
                   <td className="py-3 text-slate-600">{s.country}</td>
                   <td className="py-3 text-slate-600 font-medium">{s.commodity}</td>
-                  <td className="py-3 font-mono font-bold text-slate-900">${s.fob_price_per_ton.toFixed(2)}/MT</td>
-                  <td className="py-3 text-slate-600">{s.port_loading_speed_tpd.toLocaleString()} TPD</td>
+                  <td className="py-3 font-mono font-bold text-slate-900">${(s.fob_price_per_ton ?? 0).toFixed(2)}/MT</td>
+                  <td className="py-3 text-slate-600">{(s.port_loading_speed_tpd ?? 0).toLocaleString()} TPD</td>
                   <td className="py-3 text-[11px] text-slate-500">{s.moisture_grade}</td>
                   <td className="py-3 text-right">
                     <span className="font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
@@ -271,10 +271,10 @@ export default function ProcurementPage() {
                   <td className="py-3 font-semibold text-slate-800">{p.commodity}</td>
                   <td className="py-3 text-slate-600">{p.origin} → {p.destination}</td>
                   <td className="py-3 text-slate-600">{p.supplier_name}</td>
-                  <td className="py-3 font-semibold text-slate-900">{p.quantity_mt.toLocaleString()} MT</td>
+                  <td className="py-3 font-semibold text-slate-900">{(p.quantity_mt ?? 0).toLocaleString()} MT</td>
                   <td className="py-3 text-slate-500">{p.delivery_window}</td>
-                  <td className="py-3 font-mono font-bold text-slate-900">${p.total_cost_usd.toLocaleString()}</td>
-                  <td className="py-3 font-mono font-bold text-emerald-600">+${p.projected_savings_usd.toLocaleString()}</td>
+                  <td className="py-3 font-mono font-bold text-slate-900">${(p.total_cost_usd ?? 0).toLocaleString()}</td>
+                  <td className="py-3 font-mono font-bold text-emerald-600">+${(p.projected_savings_usd ?? 0).toLocaleString()}</td>
                   <td className="py-3">
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
                       {p.status}
