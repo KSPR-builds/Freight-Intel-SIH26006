@@ -43,13 +43,40 @@ export default function LoginPage() {
     setShowPassword(false);
   };
 
+  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
     setInfoMsg("");
 
+    const isAdmin = activeTab === "admin";
     const trimmedIdentifier = email.trim();
 
+    // ── DEMO MODE: No network call, inputs are completely optional ──
+    if (isDemoMode) {
+      setIsLoading(true);
+      const chosenRole = isAdmin ? "admin" : "user";
+      const displayName = trimmedIdentifier 
+        ? trimmedIdentifier.split("@")[0] 
+        : (isAdmin ? "Captain R. K. Nair" : "Priya Sharma");
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("freightiq_token", `demo-token-${chosenRole}-${Date.now()}`);
+        localStorage.setItem("freightiq_role", chosenRole);
+        localStorage.setItem("freightiq_name", displayName);
+        document.cookie = `freightiq_role=${chosenRole}; path=/; max-age=86400; SameSite=Lax`;
+      }
+
+      if (isAdmin) {
+        router.push("/admin");
+      } else {
+        router.push("/my-assignments");
+      }
+      return;
+    }
+
+    // ── LIVE MODE (REAL AUTH) ──
     if (!trimmedIdentifier) {
       setErrorMsg(activeTab === "user" ? "Please enter your Email or Username." : "Please enter your Admin Email / Username.");
       return;
@@ -63,7 +90,6 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const isAdmin = activeTab === "admin";
       const res = await api.login(trimmedIdentifier, password, isAdmin);
 
       if (typeof window !== "undefined") {
@@ -103,17 +129,27 @@ export default function LoginPage() {
         
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <Link href="/" className="inline-flex items-center gap-2.5 mb-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-700 via-sky-600 to-cyan-500 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
-              <Ship className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-extrabold text-2xl tracking-tight text-slate-900">freight-intel</span>
-          </Link>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Link href="/" className="inline-flex items-center gap-2.5 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-700 via-sky-600 to-cyan-500 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+                <Ship className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-extrabold text-2xl tracking-tight text-slate-900">freight-intel</span>
+            </Link>
+            {isDemoMode && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Demo Mode
+              </span>
+            )}
+          </div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
             Welcome to freight-intel
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
-            Select your role to access your maritime freight intelligence dashboard.
+            {isDemoMode 
+              ? "Hackathon Demo Mode active: Select a role and click Login. Credentials are fully optional."
+              : "Select your role to access your maritime freight intelligence dashboard."}
           </p>
         </div>
 

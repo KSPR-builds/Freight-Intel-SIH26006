@@ -38,8 +38,18 @@ export default function MessagesPage() {
 
       const token = localStorage.getItem("freightiq_token");
       if (token) {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        setMyUserId(payload.sub ? parseInt(payload.sub, 10) : null);
+        // Demo tokens (e.g. "demo-token-user-12345") are not valid JWTs — handle gracefully
+        if (token.startsWith("demo-token-")) {
+          const demoRole = storedRole || "user";
+          setMyUserId(demoRole === "admin" ? 2 : 1);
+        } else {
+          try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            setMyUserId(payload.sub ? parseInt(payload.sub, 10) : null);
+          } catch {
+            setMyUserId(null);
+          }
+        }
       }
     } catch (e) {
       console.error(e);

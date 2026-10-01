@@ -23,8 +23,19 @@ export function DashboardLayout({ children, requiredRole }: DashboardLayoutProps
       const storedRole = localStorage.getItem("freightiq_role") || "user";
       const storedName = localStorage.getItem("freightiq_name") || "Priya Sharma";
 
-      // If no token, redirect to login
+      // If no token and demo mode is active, initialize demo session
       if (!token) {
+        if (process.env.NEXT_PUBLIC_DEMO_MODE === "true") {
+          const defaultDemoRole = requiredRole || "user";
+          localStorage.setItem("freightiq_token", `demo-token-${defaultDemoRole}`);
+          localStorage.setItem("freightiq_role", defaultDemoRole);
+          localStorage.setItem("freightiq_name", defaultDemoRole === "admin" ? "Captain R. K. Nair" : "Priya Sharma");
+          document.cookie = `freightiq_role=${defaultDemoRole}; path=/; max-age=86400; SameSite=Lax`;
+          setRole(defaultDemoRole);
+          setUserName(defaultDemoRole === "admin" ? "Captain R. K. Nair" : "Priya Sharma");
+          setIsLoading(false);
+          return;
+        }
         router.push("/login");
         return;
       }

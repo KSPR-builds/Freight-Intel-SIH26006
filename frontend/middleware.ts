@@ -15,7 +15,10 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const roleCookie = request.cookies.get("freightiq_role")?.value;
 
-  // If user role is "user" or not "admin", and trying to access restricted admin/forecast routes
+  // If no role cookie is set (user not logged in), allow through — DashboardLayout handles the redirect.
+  // In demo mode the login page sets the freightiq_role cookie immediately, so middleware works correctly.
+
+  // If role is explicitly "user", block access to admin-only routes
   if (roleCookie === "user") {
     const isForbidden = FORBIDDEN_USER_ROUTES.some(
       (route) => pathname === route || pathname.startsWith(`${route}/`)
