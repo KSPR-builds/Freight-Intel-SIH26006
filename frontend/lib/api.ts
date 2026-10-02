@@ -147,7 +147,21 @@ function getMockResponse<T>(endpoint: string, options: RequestInit = {}): T | un
   }
 
   if (cleanEndpoint === "/api/reports") {
-    return mockData.MOCK_REPORTS as unknown as T;
+    let reports = [...mockData.MOCK_REPORTS];
+    const queryIdx = endpoint.indexOf("?");
+    if (queryIdx !== -1) {
+      const searchParams = new URLSearchParams(endpoint.slice(queryIdx + 1));
+      const repType = searchParams.get("report_type");
+      const searchVal = searchParams.get("search");
+      if (repType && repType !== "All") {
+        reports = reports.filter(r => r.report_type.toLowerCase().includes(repType.toLowerCase()));
+      }
+      if (searchVal) {
+        const q = searchVal.toLowerCase();
+        reports = reports.filter(r => r.title.toLowerCase().includes(q) || r.summary.toLowerCase().includes(q));
+      }
+    }
+    return reports as unknown as T;
   }
 
   if (cleanEndpoint === "/api/reports/notifications") {
@@ -242,20 +256,83 @@ function getMockResponse<T>(endpoint: string, options: RequestInit = {}): T | un
   }
 
   if (cleanEndpoint === "/api/contracts/simulate") {
+    const body = options.body ? JSON.parse(options.body as string) : {};
+    const qty = Number(body.total_quantity_mt) || 250000;
+    const origin = body.origin_port || "Singapore";
+    const dest = body.destination_port || "Chennai";
+    const cargo = body.cargo_type || "Coal";
+    const startDate = body.period_start || "2026-10-01";
+    const parcel = Number(body.parcel_size) || (qty >= 120000 ? 65000 : 45000);
+
+    // Determine vessel type sensibly
+    let vesselType = "Supramax (55k DWT)";
+    let limitingConstraint = "Draft & Cargo Matched";
+    if (parcel >= 120000 || (qty >= 300000 && !body.parcel_size)) {
+      vesselType = "Capesize (150k DWT)";
+      limitingConstraint = "Deepwater Berth Required";
+    } else if (parcel >= 70000) {
+      vesselType = "Panamax (75k DWT)";
+      limitingConstraint = "Draft 14.5m Compliant";
+    } else if (parcel <= 40000) {
+      vesselType = "Handymax (45k DWT)";
+      limitingConstraint = "Geared Discharge Flexible";
+    }
+
+    // Base rate depends slightly on cargo
+    const cargoFactor = cargo === "Iron Ore" ? 21.4 : cargo === "Fertilizer" ? 25.8 : 22.8;
+    const totalCostExpected = Math.round(qty * cargoFactor);
+    const coaCost = Math.round(totalCostExpected * 0.94);
+    const cvoCost = Math.round(totalCostExpected * 0.91);
+    const tcCost = Math.round(totalCostExpected * 0.96);
+
+    const numVoyages = Math.max(1, Math.ceil(qty / parcel));
+    const startObj = new Date(startDate);
+    const schedule = [];
+    for (let i = 0; i < Math.min(numVoyages, 6); i++) {
+      const vStart = new Date(startObj.getTime() + i * 21 * 24 * 3600 * 1000);
+      const vEnd = new Date(vStart.getTime() + 7 * 24 * 3600 * 1000);
+      const vQty = i === numVoyages - 1 ? (qty - (numVoyages - 1) * parcel) || parcel : parcel;
+      schedule.push({
+        sequence: i + 1,
+        laycan_start: vStart.toISOString().split("T")[0],
+        laycan_end: vEnd.toISOString().split("T")[0],
+        quantity_mt: vQty,
+        status: "scheduled"
+      });
+    }
+
     return {
-      name: "Simulated Contract",
-      structure: "consecutive_voyages",
-      origin_port: "Singapore",
-      destination_port: "Visakhapatnam",
-      cargo_type: "Coal",
-      total_quantity_mt: 250000,
-      total_cost_usd: 5400000,
-      rate_per_mt: 21.60,
-      voyages: [
-        { sequence: 1, laycan_start: "2026-10-05", laycan_end: "2026-10-12", quantity_mt: 55000, status: "scheduled" },
-        { sequence: 2, laycan_start: "2026-10-25", laycan_end: "2026-11-01", quantity_mt: 55000, status: "scheduled" },
-        { sequence: 3, laycan_start: "2026-11-15", laycan_end: "2026-11-22", quantity_mt: 55000, status: "scheduled" }
-      ]
+      vessel_recommendation: {
+        vessel_type: vesselType,
+        limiting_constraint: limitingConstraint
+      },
+      recommendation: {
+        cheapest_structure: "consecutive_voyage",
+        advice: `For ${qty.toLocaleString()} MT of ${cargo} on ${origin} → ${dest}, Consecutive Voyage offers $${((totalCostExpected - cvoCost) / 1000).toFixed(0)}k savings over spot fixture.`
+      },
+      prices: {
+        spot: {
+          expected: totalCostExpected,
+          low: Math.round(totalCostExpected * 0.92),
+          high: Math.round(totalCostExpected * 1.08)
+        },
+        coa: {
+          expected: coaCost,
+          low: Math.round(coaCost * 0.94),
+          high: Math.round(coaCost * 1.05)
+        },
+        consecutive_voyage: {
+          expected: cvoCost,
+          low: Math.round(cvoCost * 0.93),
+          high: Math.round(cvoCost * 1.04)
+        },
+        time_charter: {
+          expected: tcCost,
+          low: Math.round(tcCost * 0.91),
+          high: Math.round(tcCost * 1.09)
+        }
+      },
+      schedule
     } as unknown as T;
   }
 

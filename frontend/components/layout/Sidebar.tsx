@@ -31,11 +31,21 @@ interface SidebarProps {
   onOpenAssistant?: () => void;
 }
 
+/**
+ * Shared row class: fixed clamped height, no padding on top/bottom (height
+ * handles centering), identical horizontal padding for every row.
+ * `items-center` keeps every child vertically centred regardless of badge.
+ */
+const ROW =
+  "flex items-center gap-2.5 px-2.5 rounded-lg text-xs font-semibold transition-all group";
+// The height is set inline via a CSS custom property so it responds to viewport height.
+const ROW_STYLE = { height: "clamp(34px, 4.8vh, 44px)" };
+
 export function Sidebar({ userRole = "user", onOpenAssistant }: SidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [emergencyOpen, setEmergencyOpen] = useState(false);
-  
+
   const { unreadCount } = useUnreadCount();
   const { unreadMsgCount } = useUnreadMessages();
   const { openCount } = useOpenEmergenciesCount();
@@ -74,8 +84,54 @@ export function Sidebar({ userRole = "user", onOpenAssistant }: SidebarProps) {
         collapsed ? "w-16" : "w-64"
       }`}
     >
-      {/* Navigation List */}
-      <div className="p-3 space-y-1 overflow-y-auto">
+      {/* ── Navigation list ──────────────────────────────────────────── */}
+      <div
+        className="p-2 flex flex-col gap-1 overflow-y-auto"
+        /* gap-1 = 4 px between every row, uniform for both roles */
+      >
+        {/* ── Admin Console highlight (admin only) ─────────────────── */}
+        {userRole === "admin" && (
+          <>
+            <Link
+              href="/admin"
+              style={ROW_STYLE}
+              className={`${ROW} font-bold border ${
+                pathname === "/admin"
+                  ? "bg-gradient-to-r from-purple-700 via-purple-600 to-indigo-600 text-white border-purple-400 shadow-sm shadow-purple-600/30 ring-1 ring-purple-400/40"
+                  : "text-purple-800 bg-gradient-to-r from-purple-50 via-indigo-50/70 to-purple-50 hover:bg-purple-100/90 border-purple-200/80 shadow-2xs hover:shadow-xs"
+              }`}
+              title={collapsed ? "Admin Console (Master)" : undefined}
+            >
+              {/* Icon — fixed 16 px, never moves */}
+              <ShieldAlert
+                className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${
+                  pathname === "/admin" ? "text-white" : "text-purple-600"
+                }`}
+              />
+
+              {/* Label + MASTER badge */}
+              {!collapsed && (
+                <div className="flex items-center justify-between w-full min-w-0">
+                  <span className="truncate tracking-tight">Admin Console</span>
+                  <span
+                    className={`shrink-0 w-[42px] text-center text-[9px] px-1.5 py-0.5 rounded-full uppercase font-mono tracking-wider font-extrabold ${
+                      pathname === "/admin"
+                        ? "bg-white/20 text-white border border-white/30"
+                        : "bg-purple-200/90 text-purple-900 border border-purple-300/80"
+                    }`}
+                  >
+                    MASTER
+                  </span>
+                </div>
+              )}
+            </Link>
+
+            {/* Thin divider + spacing that separates Admin Console from the rest */}
+            <div className="mx-1 mt-1.5 mb-0.5 border-t border-slate-200/80" />
+          </>
+        )}
+
+        {/* ── Regular nav rows ─────────────────────────────────────── */}
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -86,13 +142,15 @@ export function Sidebar({ userRole = "user", onOpenAssistant }: SidebarProps) {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${
+              style={ROW_STYLE}
+              className={`${ROW} ${
                 isActive
                   ? "bg-gradient-to-r from-sky-600 to-sky-500 text-white shadow-xs shadow-sky-600/20"
                   : "text-slate-600 hover:bg-sky-50/70 hover:text-sky-700"
               }`}
               title={collapsed ? item.name : undefined}
             >
+              {/* Icon wrapper — fixed size, relative for dot badge */}
               <div className="relative shrink-0">
                 <Icon
                   className={`w-4 h-4 ${
@@ -101,17 +159,23 @@ export function Sidebar({ userRole = "user", onOpenAssistant }: SidebarProps) {
                       : "text-sky-600 group-hover:scale-110 transition-transform"
                   }`}
                 />
-                {/* Unread dot — shows even when collapsed */}
+                {/* Dot badge — collapsed only */}
                 {showBadge && collapsed && (
                   <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-rose-500 ring-1 ring-white" />
                 )}
               </div>
 
+              {/* Label + count badge — expanded only */}
               {!collapsed && (
                 <div className="flex items-center justify-between w-full min-w-0">
                   <span className="truncate">{item.name}</span>
+                  {/*
+                    Fixed 20×20 badge so single-digit and double-digit look
+                    identical and NEVER push the row taller (the row height
+                    is locked by ROW_STYLE above).
+                  */}
                   {showBadge && (
-                    <span className="ml-auto shrink-0 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-rose-500 text-white text-[10px] font-bold leading-none">
+                    <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full bg-rose-500 text-white text-[10px] font-bold leading-none">
                       {badgeCount > 99 ? "99+" : badgeCount}
                     </span>
                   )}
@@ -120,69 +184,30 @@ export function Sidebar({ userRole = "user", onOpenAssistant }: SidebarProps) {
             </Link>
           );
         })}
-
-        {/* Admin Console link */}
-        {userRole === "admin" && (
-          <Link
-            href="/admin"
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all group mt-3 ${
-              pathname === "/admin"
-                ? "bg-purple-600 text-white shadow-xs"
-                : "text-purple-700 bg-purple-50/70 hover:bg-purple-100/80 border border-purple-100"
-            }`}
-            title={collapsed ? "Admin Console" : undefined}
-          >
-            <ShieldAlert className="w-4 h-4 shrink-0 text-purple-600 group-hover:scale-110 transition-transform" />
-            {!collapsed && (
-              <div className="flex items-center justify-between w-full">
-                <span>Admin Console</span>
-                <span className="text-[9px] bg-purple-200 text-purple-800 px-1.5 py-0.5 rounded-full uppercase font-mono">
-                  Master
-                </span>
-              </div>
-            )}
-          </Link>
-        )}
       </div>
 
-      {/* Bottom: AI promo (admin only) + Emergency (user only) + Collapse */}
-      <div className="p-3 border-t border-slate-100 space-y-2">
-        {!collapsed && userRole === "admin" && (
-          <div className="bg-gradient-to-br from-sky-50 to-blue-50/50 p-3 rounded-xl border border-sky-100 text-xs">
-            <div className="flex items-center gap-2 text-sky-800 font-bold mb-1">
-              <Sparkles className="w-3.5 h-3.5 text-sky-600" />
-              <span>Ask freight-intel</span>
-            </div>
-            <p className="text-[11px] text-slate-500 mb-2">
-              Query vessel day rates, draft clearance, or route fuel economics.
-            </p>
-            <Link
-              href="/insights"
-              className="inline-block text-[11px] font-semibold text-sky-700 hover:text-sky-800"
-            >
-              Open AI Workspace →
-            </Link>
-          </div>
-        )}
-
+      {/* ── Bottom: Emergency (user only) + collapse button ─────────── */}
+      <div className="p-2 border-t border-slate-100 flex flex-col gap-1 shrink-0">
         {userRole === "user" && (
           <button
             onClick={() => setEmergencyOpen(true)}
-            className={`w-full flex items-center justify-center gap-2 p-2 rounded-xl font-bold transition-all ${
+            style={ROW_STYLE}
+            className={`w-full flex items-center justify-center gap-2 px-2 rounded-lg font-bold text-xs transition-all ${
               collapsed
                 ? "bg-rose-100 text-rose-600 hover:bg-rose-200"
                 : "bg-rose-500 text-white hover:bg-rose-600 shadow-sm shadow-rose-500/20"
             }`}
             title={collapsed ? "Report Emergency" : undefined}
           >
-            <AlertTriangle className="w-4 h-4" />
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
             {!collapsed && <span>Emergency</span>}
           </button>
         )}
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="w-full flex items-center justify-center p-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+          style={ROW_STYLE}
+          className="w-full flex items-center justify-center px-2 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
           title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
           {collapsed ? (

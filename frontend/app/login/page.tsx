@@ -68,11 +68,8 @@ export default function LoginPage() {
         document.cookie = `freightiq_role=${chosenRole}; path=/; max-age=86400; SameSite=Lax`;
       }
 
-      if (isAdmin) {
-        router.push("/admin");
-      } else {
-        router.push("/my-assignments");
-      }
+      const targetRoute = chosenRole === "admin" ? "/dashboard" : "/my-assignments";
+      router.push(targetRoute);
       return;
     }
 
@@ -92,19 +89,15 @@ export default function LoginPage() {
     try {
       const res = await api.login(trimmedIdentifier, password, isAdmin);
 
+      const resolvedRole = res.role || (isAdmin ? "admin" : "user");
       if (typeof window !== "undefined") {
         localStorage.setItem("freightiq_token", res.access_token);
-        const resolvedRole = res.role || (isAdmin ? "admin" : "user");
         localStorage.setItem("freightiq_role", resolvedRole);
         localStorage.setItem("freightiq_name", res.full_name || (isAdmin ? "Administrator" : "Enterprise User"));
         document.cookie = `freightiq_role=${resolvedRole}; path=/; max-age=86400; SameSite=Lax`;
       }
 
-      if (isAdmin || res.role === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/my-assignments");
-      }
+      router.push(resolvedRole === "admin" ? "/dashboard" : "/my-assignments");
     } catch (err: any) {
       setErrorMsg(err.message || "Authentication failed. Please verify your credentials.");
     } finally {

@@ -602,18 +602,50 @@ export const MOCK_CONTRACTS = [
 export const MOCK_REPORTS = [
   {
     id: 1,
-    title: "East Coast India Q3 Freight Rate Review",
-    report_type: "Market Analysis",
-    date: "2026-09-30",
-    file_format: "PDF",
-    size: "2.4 MB"
+    title: "East Coast India Freight Outlook",
+    report_type: "Freight Forecast",
+    corridor: "Singapore / Indonesia → East Coast India",
+    commodity: "Thermal Coal & Iron Ore",
+    generated_by: "freight-intel ML Engine",
+    summary: "Comprehensive freight rate projections and volatility bands across major dry bulk supply lanes.",
+    file_size_kb: 245,
+    format: "PDF",
+    created_at: "2026-09-28 10:30"
   },
   {
     id: 2,
-    title: "Voyage Bunker Fuel & Emissions Ledger",
-    report_type: "Operational Report",
-    date: "2026-10-01",
-    file_format: "CSV",
-    size: "640 KB"
+    title: "Vessel Chartering Efficiency & Fuel Audit",
+    report_type: "Vessel Chartering",
+    corridor: "Bay of Bengal Corridors",
+    commodity: "Dry Bulk",
+    generated_by: "Charter Optimization Service",
+    summary: "Analysis of chartered voyages with fuel consumption benchmarks comparing eco-speeds vs full speed.",
+    file_size_kb: 180,
+    format: "CSV",
+    created_at: "2026-09-25 14:15"
+  },
+  {
+    id: 3,
+    title: "Bulk Cargo Procurement & Supplier Quality Index",
+    report_type: "Cargo Procurement",
+    corridor: "Indonesia & Australia → Vizag/Paradip",
+    commodity: "Coal & Bauxite",
+    generated_by: "Procurement Analytics",
+    summary: "Vendor reliability scorecard and FOB contract savings summary totaling $3.85M in captured discounts.",
+    file_size_kb: 310,
+    format: "PDF",
+    created_at: "2026-09-22 09:00"
+  },
+  {
+    id: 4,
+    title: "East Coast India Port Congestion & Turnaround Times",
+    report_type: "Route Optimization",
+    corridor: "Chennai, Vizag, Paradip, Kolkata, Kakinada",
+    commodity: "All Bulk Cargoes",
+    generated_by: "AIS Telemetry Feed",
+    summary: "Average anchorage waiting times and berth productivity metrics across 5 major East Coast ports.",
+    file_size_kb: 165,
+    format: "CSV",
+    created_at: "2026-09-20 16:45"
   }
 ];

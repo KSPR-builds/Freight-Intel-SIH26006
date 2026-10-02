@@ -63,7 +63,10 @@ export function TopHeader({ userRole = "user", userName = "Priya Sharma" }: TopH
       <header className="sticky top-0 z-30 w-full h-16 bg-white/90 backdrop-blur-md border-b border-sky-100/80 px-4 sm:px-6 flex items-center justify-between shadow-xs">
         {/* Left: Brand Identity */}
         <div className="flex items-center gap-3 shrink-0">
-          <Link href="/dashboard" className="flex items-center gap-2.5 group whitespace-nowrap">
+          <Link
+            href={userRole === "admin" ? "/dashboard" : "/my-assignments"}
+            className="flex items-center gap-2.5 group whitespace-nowrap"
+          >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-700 via-sky-600 to-cyan-500 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform shrink-0">
               <Ship className="w-5 h-5 text-white" />
             </div>

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { PortInfo, RouteOption } from "@/types";
-import { Anchor, Navigation, Layers, Info } from "lucide-react";
+import { Anchor, Navigation, Layers, Info, Ship } from "lucide-react";
 
 interface MaritimeMapProps {
   ports?: PortInfo[];
@@ -39,12 +39,11 @@ export function MaritimeMap({
           scrollWheelZoom: true
         });
 
-        // CartoDB Positron - Light clean enterprise map style
+        // OpenStreetMap - Standard Free Tile Layer (No API Key Required)
         L.tileLayer(
-          "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+          "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
           {
-            attribution: '&copy; <a href="https://carto.com/">CARTO</a>, OpenStreetMap',
-            subdomains: "abcd",
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
             maxZoom: 19
           }
         ).addTo(map);
@@ -163,8 +162,24 @@ export function MaritimeMap({
     <div className="relative w-full rounded-2xl overflow-hidden border border-sky-100 shadow-sm bg-slate-100">
       <div ref={mapContainerRef} style={{ height }} className="w-full" />
 
+      {/* freight-intel Watermark in bottom-left corner (45% opacity, non-blocking) */}
+      <div
+        className="absolute bottom-3 left-3 z-10 pointer-events-none select-none flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/70 backdrop-blur-xs border border-slate-300/40 opacity-45 transition-opacity"
+        aria-hidden="true"
+      >
+        <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-sky-700 via-sky-600 to-cyan-500 flex items-center justify-center text-white shadow-2xs">
+          <Ship className="w-3.5 h-3.5 text-white" />
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="font-extrabold text-xs tracking-tight text-slate-900">freight-intel</span>
+          <span className="text-[8px] font-bold uppercase tracking-wider px-1 py-0.2 rounded bg-sky-100 text-sky-800 border border-sky-200">
+            MARITIME AI
+          </span>
+        </div>
+      </div>
+
       {/* Map Overlay Legend */}
-      <div className="absolute bottom-4 left-4 z-20 bg-white/90 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-sky-100 shadow-md text-xs space-y-1.5 pointer-events-auto">
+      <div className="absolute top-4 right-4 z-20 bg-white/90 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-sky-100 shadow-md text-xs space-y-1.5 pointer-events-auto">
         <div className="font-bold text-slate-800 text-[11px] uppercase tracking-wider mb-1">
           Maritime Legend
         </div>

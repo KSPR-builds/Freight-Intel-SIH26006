@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { api } from "@/lib/api";
 import { 
@@ -14,10 +15,20 @@ import {
 } from "lucide-react";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // If logged in as standard user, redirect to /my-assignments
+    if (typeof window !== "undefined") {
+      const storedRole = localStorage.getItem("freightiq_role");
+      if (storedRole === "user") {
+        router.replace("/my-assignments");
+        return;
+      }
+    }
+
     async function loadData() {
       try {
         const dashRes = await api.getDashboard().catch(() => null);
@@ -29,7 +40,7 @@ export default function DashboardPage() {
       }
     }
     loadData();
-  }, []);
+  }, [router]);
 
   // Exactly 4 KPI Cards (as specified in user requirements)
   const kpis = [
