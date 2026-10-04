@@ -9,7 +9,7 @@
 
 **freight-intel** is an enterprise-grade maritime logistics intelligence and vessel chartering platform tailored for overseas dry bulk supply corridors into the East Coast of India (Chennai, Visakhapatnam, Paradip, Kolkata/Haldia, Kakinada).
 
-By synthesizing 12+ months of historical fixture indices, live bunker pricing (VLSFO / MGO), port congestion delays, and vessel naval architectural specifications, freight-intel provides predictive freight rate trajectories with confidence intervals, multi-factor vessel chartering recommendations with interactive hover telemetry, and bulk procurement scheduling.
+The deployed prototype runs in **Seeded Demo Mode** using sample data. Live feeds (weather, AIS, bunker prices) are supported through the DataProvider pattern but need API keys and are not enabled in the demo. Forecast accuracy figures shown in the admin panel are sample values; backtesting on real data is the next step.
 
 ---
 
@@ -49,6 +49,32 @@ By synthesizing 12+ months of historical fixture indices, live bunker pricing (V
    - Separate tabs for **User Login** and **Admin Login**.
    - Admin KPI suite, User management (edit, activate/disable, role assign), System data controls, and ML Telemetry monitoring (MAE, RMSE, $R^2$, Data Drift).
 
+8. **Contract Planning Engine**
+   - Simulates shipping contracts for a given cargo, quantity, route and period.
+   - Compares Spot, COA, Consecutive Voyage and Time Charter by total cost.
+   - Generates a voyage-by-voyage schedule (laycan windows, quantities, idle gaps) that can be assigned to an operator.
+
+9. **Voyage & Cargo Assignments**
+   - Admins assign voyages to users; statuses are Active, Updated or Cancelled.
+   - Users see their own assignments and can export them as CSV.
+
+10. **Emergency Reporting & Alerts**
+    - Users report cyclone, severe weather, security, port closure or other issues with a severity level.
+    - Admins acknowledge and resolve alerts.
+
+11. **Notifications & Messaging**
+    - Alerts for new or updated assignments and market insights.
+    - In-app messaging between users and admins.
+
+12. **Admin Console (`/admin`)**
+    - Overview of total users, tracked vessels, managed ports, active routes, API invocations and system health.
+    - User identity and access management: add new users, view organisation and role, remove accounts.
+    - ML Operations telemetry: MAE, RMSE, R² (goodness of fit) and data drift for the forecasting model.
+    - Admin-only tools for assigning voyages, handling emergency alerts and messaging users.
+
+13. **Platform Settings**
+    - Profile, default region, currency and measurement units.
+    - System health and security tabs.
 ---
 
 ## 🛠️ Technology Stack
@@ -120,3 +146,11 @@ freight-intel is built on an extensible `DataProvider` pattern:
 
 ## 📄 License
 Enterprise Maritime Intelligence Platform — freight-intel 2025.
+
+## 🗺️ Roadmap (not yet done)
+
+- Add remaining East Coast ports (Gangavaram, Gopalpur, Dhamra, Sagar-Sandheads) and origins (US, Mozambique, Russia)
+- Add Handysize vessel class
+- Vessel-versus-port fit check (length, beam, draft)
+- Automated idle-time scenario management and early-warning alerts
+- Real historical data and backtested accuracy (MAE)
